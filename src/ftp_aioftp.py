@@ -1,19 +1,26 @@
 import asyncio
 import aioftp
-import time
+import time, json
 import ftplib
 time_now = time.time()
+with open("./data/config.json") as file:
+    data = json.load(file)
+    FTP_HOST = data["FTP_HOST"]
+    FTP_USER = data["FTP_USER"]
+    FTP_PASS = data["FTP_PASS"]
+
 
 async def download_file(path):
-    async with aioftp.Client.context("ftp3.interactivebrokers.com", user="shortstock", password="") as client:
+    async with aioftp.Client.context(FTP_HOST, user=FTP_USER, password=FTP_PASS) as client:
         await client.download(path)
 
 async def main():
-    ftp = ftplib.FTP("ftp3.interactivebrokers.com", "shortstock", "")
+    #getting files from ftp server
+    ftp = ftplib.FTP(FTP_HOST, FTP_USER, FTP_PASS)
     files = ftp.nlst()
-    async with aioftp.Client.context("ftp3.interactivebrokers.com", user="shortstock", password="") as client:
-        tasks = [download_file(path) for path in files]
-        await asyncio.gather(*tasks)
+    #start downloading
+    tasks = [download_file(path) for path in files]
+    await asyncio.gather(*tasks)
 
 asyncio.run(main())
 print((f"Time taken: {time.time() - time_now} seconds"))
