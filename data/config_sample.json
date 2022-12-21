@@ -1,0 +1,5 @@
+{
+    "FTP_HOST": "ftp.example_company.com",
+    "FTP_USER": "foo",
+    "FTP_PASS": "bar"
+}
